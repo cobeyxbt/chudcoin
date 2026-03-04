@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHUD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background: #000;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    /* Video Background */
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      padding: 2rem;
+      z-index: 10;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.5rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.5rem;
+      position: relative;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: #ff3131;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px #ff3131;
+    }
+
+    nav a:hover {
+      color: #ff3131;
+      text-shadow: 0 0 30px rgba(255, 49, 49, 0.8);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* Volume Control */
+    .volume-control {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #fff;
+      padding: 0.8rem 1.2rem;
+      border-radius: 4px;
+    }
+
+    .sound-toggle {
+      background: none;
+      border: none;
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.3s ease;
+    }
+
+    .sound-toggle:hover {
+      color: #ff3131;
+      text-shadow: 0 0 10px rgba(255, 49, 49, 0.8);
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .volume-slider::-webkit-slider-thumb:hover {
+      background: #ff3131;
+      box-shadow: 0 0 10px rgba(255, 49, 49, 0.8);
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .volume-slider::-moz-range-thumb:hover {
+      background: #ff3131;
+      box-shadow: 0 0 10px rgba(255, 49, 49, 0.8);
+    }
+
+    /* Center GIF Container */
+    .center-gif {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      opacity: 0;
+      animation: fadeInGif 1s ease forwards;
+      animation-delay: 1s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .center-gif img {
+      max-width: 400px;
+      max-height: 400px;
+      width: auto;
+      height: auto;
+      filter: drop-shadow(0 0 40px rgba(255, 49, 49, 0.4));
+    }
+
+    .ca {
+      margin-top: 1.5rem;
+      color: #fff;
+      font-size: 1.3rem;
+      letter-spacing: 0.1em;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1rem 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      word-break: break-all;
+      text-align: center;
+    }
+
+    .ca:hover {
+      border-color: #ff3131;
+      box-shadow: 0 0 15px rgba(255, 49, 49, 0.4);
+    }
+
+    .caption {
+      margin-top: 1.2rem;
+      color: #fff;
+      font-size: 2rem;
+      letter-spacing: 0.3em;
+      text-shadow: 0 0 30px rgba(255, 49, 49, 0.6), 0 0 60px rgba(255, 49, 49, 0.3);
+    }
+
+    @keyframes fadeInGif {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    /* Vignette Overlay */
+    .vignette {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Video -->
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- Vignette Overlay for depth -->
+  <div class="vignette"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="https://x.com/i/communities/2020997104953389109" target="_blank">Community</a>
+    <a href="https://letsbonk.fun/token/EjNcJDRCASkxyPkiY6nbcGFqpu4frDE6qAupzaq1bonk" target="_blank">chud</a>
+    <a href="https://dexscreener.com/solana/4gztkqxuvgls43ruiz2njqnxgsewmz5rqeftvlx8vk11" target="_blank">Dexscreener</a>
+  </nav>
+
+  <!-- Center GIF -->
+  <div class="center-gif">
+    <img src="chud.gif" alt="CHUD">
+    <p class="ca">BONKERS</p>
+    <p class="caption">BILLIONS MUST CHUD</p>
+  </div>
+
+  <!-- Volume Control -->
+  <div class="volume-control">
+    <button class="sound-toggle" id="soundBtn">🔇</button>
+    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="30">
+  </div>
+
+  <script>
+    const video = document.querySelector('.video-bg');
+    const soundBtn = document.getElementById('soundBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    // Start at 30% volume (easier on ears)
+    video.volume = 0.3;
+
+    soundBtn.addEventListener('click', () => {
+      if (video.muted) {
+        video.muted = false;
+        soundBtn.textContent = '🔊';
+      } else {
+        video.muted = true;
+        soundBtn.textContent = '🔇';
+      }
+    });
+
+    volumeSlider.addEventListener('input', (e) => {
+      const volume = e.target.value / 100;
+      video.volume = volume;
+      
+      // Auto unmute when adjusting volume
+      if (volume > 0 && video.muted) {
+        video.muted = false;
+      }
+      
+      // Update icon based on volume level
+      if (volume === 0) {
+        soundBtn.textContent = '🔇';
+        video.muted = true;
+      } else {
+        soundBtn.textContent = '🔊';
+      }
+    });
+
+  </script>
+</body>
+</html>
+
